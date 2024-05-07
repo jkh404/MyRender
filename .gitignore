@@ -3,5 +3,5 @@
 ################################################################################
 
 /.vs/MyRender
-/BenchmarkConsole/bin
-/BenchmarkConsole/obj
+bin
+obj
