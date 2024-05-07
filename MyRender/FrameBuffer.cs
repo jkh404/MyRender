@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace MyRender
 {
@@ -98,34 +97,6 @@ namespace MyRender
                     return new Color(_buffer[y*Width*4+x*4+3], _buffer[y*Width*4+x*4+2], _buffer[y*Width*4+x*4+1], _buffer[y*Width*4+x*4]);
                 }
             }
-        }
-    }
-    [StructLayout(LayoutKind.Explicit,Size =4)]
-    public record struct Color
-    {
-
-        [FieldOffset(0)] public int Value;
-        [FieldOffset(0)] public byte B;
-        [FieldOffset(1)] public byte G;
-        [FieldOffset(2)] public byte R;
-        [FieldOffset(3)] public byte A;
-        public Color(byte a,  byte r, byte g, byte b)
-        {
-            R = r;
-            G = g;
-            B = b;
-            A = a;
-        }
-        public Color( byte r, byte g, byte b)
-        {
-            R = r;
-            G = g;
-            B = b;
-            A = byte.MaxValue;
-        }
-        public Color(int val)
-        {
-            Value = val;
         }
     }
 }
