@@ -1,11 +1,14 @@
 ﻿using System.Buffers;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace MyRender
 {
-    public sealed class FrameBuffer : IDisposable
+    
+    internal  sealed partial class FrameBuffer : IDisposable
     {
         private readonly static ArrayPool<byte> Pool= ArrayPool<byte>.Create();
         public  int Width, Height, Size;
@@ -58,10 +61,8 @@ namespace MyRender
             _isReturn=true;
             _InitColor();
         }
-        public void Dispose()
-        {
-            if(_isReturn) Pool.Return(_buffer);
-        }
+        
+        
         public byte[] ToByteArray()
         {
             return _buffer.AsSpan(0,_bufferSize).ToArray();
@@ -71,32 +72,36 @@ namespace MyRender
         {
             return _colorBuffer.AsSpan(0, Size).ToArray();
         }
-
-        public void Write(int x,int y,Color color)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(int x,int y,[In] ref Color color)
         {
-            if(_colorBuffer!=null) _colorBuffer[y*Width+x]=color;
-            else
-            {
-                _buffer[y*Width*4+x*4]=color.B;
-                _buffer[y*Width*4+x*4+1]=color.G;
-                _buffer[y*Width*4+x*4+2]=color.R;
-                _buffer[y*Width*4+x*4+3]=color.A;
-            }
+            if (x>=Width || y>=Height) return;
+            var offset = y * Width * 4 + x * 4;
+            _buffer[offset]=color.B;
+            _buffer[offset+1]=color.G;
+            _buffer[offset+2]=color.R;
+            _buffer[offset+3]=color.A;
+
         }
         public Color this[int x,int y]
         {
             set
             {
-                Write(x,y,value);
+                Write(x,y,ref value);
             }
             get
             {
                 if(_colorBuffer!=null) return _colorBuffer[y*Width+x];
                 else
                 {
-                    return new Color(_buffer[y*Width*4+x*4+3], _buffer[y*Width*4+x*4+2], _buffer[y*Width*4+x*4+1], _buffer[y*Width*4+x*4]);
+                    var offset = y * Width * 4 + x * 4;
+                    return new Color(_buffer[offset+3], _buffer[offset+2], _buffer[offset+1], _buffer[offset]);
                 }
             }
+        }
+        public void Dispose()
+        {
+            if (_isReturn) Pool.Return(_buffer);
         }
     }
 }

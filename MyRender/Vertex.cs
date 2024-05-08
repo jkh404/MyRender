@@ -1,22 +1,31 @@
 ﻿
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 
 namespace MyRender
 {
-    public sealed class Vertex
+    [StructLayout(LayoutKind.Sequential)]
+    public readonly struct Vertex
     {
-        public readonly Vec4 Position;
-        public readonly Color Color;
-        public readonly Vec2 Texcoord;
-        public readonly Vec3 Normal;
+        public readonly  Vector4 Position;
+        public readonly  Color Color;
+        public readonly  Vector2 Texcoord;
+        public readonly  Vector3 Normal;
 
-        public Vertex(Vec3 position, Color color, Vec2 texcoord, Vec3 normal)
+        public Vertex(Vector3 position,Color color,Vector2 texcoord,Vector3 normal)
         {
-            Position=new Vec4(position,1);
-            Color=color;
-            Texcoord=texcoord;
-            Normal=normal;
+            Position =  new Vector4(position, 1F);
+            Color =  color;
+            Texcoord =  texcoord;
+            Normal =  normal;
+        }
+        public Vertex(Vector3 position, Color color)
+        {
+            Position =  new Vector4(position, 1F);
+            Color =  color;
+            Texcoord =  new Vector2(0,0);
+            Normal =  new Vector3(0,0,1);
         }
     }
 }
